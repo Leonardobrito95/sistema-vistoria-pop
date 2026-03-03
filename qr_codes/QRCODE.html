@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Codes - Vistoria POPs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .qr-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        .qr-card h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        .qr-card img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+        .qr-card .url {
+            font-size: 12px;
+            color: #7f8c8d;
+            word-break: break-all;
+            margin-top: 10px;
+        }
+        .instructions {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .instructions ol {
+            line-height: 1.8;
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .instructions {
+                page-break-after: always;
+            }
+            .qr-card {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 QR Codes - Vistoria de POPs</h1>
+    
+    <div class="instructions">
+        <h3>📋 Instruções de Uso</h3>
+        <ol>
+            <li>Cada QR code abaixo direciona para o dashboard de vistoria filtrado por POP</li>
+            <li>Escaneie o QR code com seu smartphone para acessar rapidamente as informações do POP</li>
+        </ol>
+    </div>
+    
+    <div class="qr-grid">
+
+        <div class="qr-card">
+            <h2>Águas Claras</h2>
+            <img src="qr_aguas-claras.png" alt="QR Code Águas Claras">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=aguas-claras</div>
+        </div>
+
+        <div class="qr-card">
+            <h2>Taguatinga</h2>
+            <img src="qr_taguatinga.png" alt="QR Code Taguatinga">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=taguatinga</div>
+        </div>
+
+        <div class="qr-card">
+            <h2>Ceilândia</h2>
+            <img src="qr_ceilandia.png" alt="QR Code Ceilândia">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=ceilandia</div>
+        </div>
+
+        <div class="qr-card">
+            <h2>Arniqueiras</h2>
+            <img src="qr_arniqueiras.png" alt="QR Code Arniqueiras">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=arniqueiras</div>
+        </div>
+
+        <div class="qr-card">
+            <h2>SIA</h2>
+            <img src="qr_sia.png" alt="QR Code SIA">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=sia</div>
+        </div>
+
+        <div class="qr-card">
+            <h2>Vicente Pires</h2>
+            <img src="qr_vicente-pires.png" alt="QR Code Vicente Pires">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=vicente-pires</div>
+        </div>
+
+        <div class="qr-card">
+            <h2>Sudoeste</h2>
+            <img src="qr_sudoeste.png" alt="QR Code Sudoeste">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=sudoeste</div>
+        </div>
+
+        <div class="qr-card">
+            <h2>Pátio Brasil</h2>
+            <img src="qr_patio-brasil.png" alt="QR Code Pátio Brasil">
+            <div class="url">http://45.230.84.50:5002/dashboard?pop=patio-brasil</div>
+        </div>
+
+    </div>
+    
+    <footer style="text-align: center; color: #7f8c8d; margin-top: 40px;">
+        <p>Sistema de Vistoria de POPs </p>
+    </footer>
+</body>
+</html>
