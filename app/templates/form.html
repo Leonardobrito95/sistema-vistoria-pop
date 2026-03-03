@@ -1,0 +1,754 @@
+{% extends "_layout.html" %}
+
+{% set form_action = url_for('edit_submission', submission_id=submission.submission_id) if submission else
+url_for('pop_form', pop_name=pop_name) %}
+{% set page_title = "Editar Submissão" if submission else pop_title + " - Formulário de Inspeção" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_head %}
+<!-- Script injetado inline no final do arquivo para evitar cache de navegadores proxy -->
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+        <div class="col-lg-10">
+                <h2 class="mb-4">{{ "Editar Submissão" if submission else "Formulário de Inspeção Técnica - POP " +
+                        pop_title }}
+                </h2>
+
+                <p class="text-muted mb-4">Campos com <span class="required-star">*</span> são obrigatórios.</p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form action="{{ form_action }}" method="POST" enctype="multipart/form-data" class="needs-validation"
+                        novalidate>
+                        <div class="card mb-4">
+                                <div class="card-header">Limpeza e Organização <span class="required-star">*</span>
+                                </div>
+                                <div class="card-body" id="limpeza-group">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="limpeza" value="limpeza_organizado" {% if submission and
+                                                        ('limpeza_organizado' in submission.form_data.get('limpeza', [])
+                                                        or 'Espaço Limpo e organizado' in
+                                                        submission.form_data.get('limpeza', [])) %}checked{% endif %}>
+                                                Espaço Limpo e organizado
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="limpeza" value="limpeza_necessaria" {% if submission and
+                                                        ('limpeza_necessaria' in submission.form_data.get('limpeza', [])
+                                                        or 'Necessita de Limpeza' in submission.form_data.get('limpeza',
+                                                        [])) %}checked{% endif %}>
+                                                Necessita de Limpeza</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="limpeza" value="limpeza_periodica_realizada" {% if
+                                                        submission and ('limpeza_periodica_realizada' in
+                                                        submission.form_data.get('limpeza', [])
+                                                        or 'Realizado Limpeza periódica' in
+                                                        submission.form_data.get('limpeza', [])) %}checked{% endif %}>
+                                                Realizado Limpeza periódica
+                                        </div>
+                                        <input type="text" class="form-control mt-2" name="limpeza_outro"
+                                                placeholder="Outro (opcional)"
+                                                value="{{ submission.form_data.get('limpeza_outro', '') if submission }}">
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Funcionamento Ar Condicionado <span
+                                                class="required-star">*</span></div>
+                                <div class="card-body" id="ar_condicionado-group">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_controle_funciona" {% if
+                                                        submission and ('ar_controle_funciona' in
+                                                        submission.form_data.get('ar_condicionado', [])
+                                                        or 'Controle Funcionando' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Controle Funcionando
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_temp_20" {% if submission and
+                                                        ('ar_temp_20' in submission.form_data.get('ar_condicionado', [])
+                                                        or 'Temperatura ajustada em 20º' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Temperatura ajustada
+                                                em 20º</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_temp_aquario_ok" {% if
+                                                        submission and ('ar_temp_aquario_ok' in
+                                                        submission.form_data.get('ar_condicionado', [])
+                                                        or 'Temperatura do Aquário entre 18º e 20º' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Temperatura do Aquário entre 18º e 20º</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_01_ok" {% if submission and
+                                                        ('ar_01_ok' in submission.form_data.get('ar_condicionado', [])
+                                                        or 'Ar condicionado 01 em pleno funcionamento' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Ar condicionado 01 em
+                                                pleno funcionamento</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_02_ok" {% if submission and
+                                                        ('ar_02_ok' in submission.form_data.get('ar_condicionado', [])
+                                                        or 'Ar condicionado 02 em pleno funcionamento' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Ar condicionado 02 em
+                                                pleno funcionamento</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_grelhas_limpas" {% if
+                                                        submission and ('ar_grelhas_limpas' in
+                                                        submission.form_data.get('ar_condicionado', [])
+                                                        or 'Grelhas estão limpas' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Grelhas estão limpas
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_vazando" {% if submission and
+                                                        ('ar_vazando' in submission.form_data.get('ar_condicionado', [])
+                                                        or 'Vazando Água' in submission.form_data.get('ar_condicionado',
+                                                        [])) %}checked{% endif %}> Vazando Água</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_nao_gela" {% if submission and
+                                                        ('ar_nao_gela' in submission.form_data.get('ar_condicionado',
+                                                        []) or 'Não está gelando' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Não está gelando</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_manut_periodica_req" {% if
+                                                        submission and ('ar_manut_periodica_req' in
+                                                        submission.form_data.get('ar_condicionado', [])
+                                                        or 'Necessita de manutenção periódica' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Necessita de manutenção periódica</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="ar_condicionado" value="ar_manut_periodica_realizada" {%
+                                                        if submission and ('ar_manut_periodica_realizada' in
+                                                        submission.form_data.get('ar_condicionado', [])
+                                                        or 'Realizado Manutenção periódica do Ar' in
+                                                        submission.form_data.get('ar_condicionado', [])) %}checked{%
+                                                        endif %}> Realizado Manutenção periódica</div>
+                                        <input type="text" class="form-control mt-2" name="ar_condicionado_outro"
+                                                placeholder="Outro (opcional)"
+                                                value="{{ submission.form_data.get('ar_condicionado_outro', '') if submission }}">
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Gerador <span class="required-star">*</span></div>
+                                <div class="card-body" id="gerador-group">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_nao_possui" {% if submission and
+                                                        ('gerador_nao_possui' in submission.form_data.get('gerador', [])
+                                                        or 'Não possui gerador' in submission.form_data.get('gerador',
+                                                        [])) %}checked{% endif %}> Não possui gerador</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_combustivel_meio" {% if submission
+                                                        and ('gerador_combustivel_meio' in
+                                                        submission.form_data.get('gerador', [])
+                                                        or 'Combustível em ½ tanque' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Combustível em ½ tanque</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_marcador_ok" {% if submission and
+                                                        ('gerador_marcador_ok' in submission.form_data.get('gerador',
+                                                        []) or 'Marcador de combustível funcionando' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Marcador de combustível funcionando</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_cabos_ok" {% if submission and
+                                                        ('gerador_cabos_ok' in submission.form_data.get('gerador', [])
+                                                        or 'Cabos conectados de forma correta' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Cabos conectados de forma correta</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_conexoes_ok" {% if submission and
+                                                        ('gerador_conexoes_ok' in submission.form_data.get('gerador',
+                                                        []) or 'Conexões em perfeito estado' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Conexões em perfeito estado
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_vazamento_oleo" {% if submission
+                                                        and ('gerador_vazamento_oleo' in
+                                                        submission.form_data.get('gerador', [])
+                                                        or 'Apresenta vazamento de óleo' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Apresenta vazamento de óleo
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_vazamento_diesel" {% if submission
+                                                        and ('gerador_vazamento_diesel' in
+                                                        submission.form_data.get('gerador', [])
+                                                        or 'Apresenta vazamento de Diesel' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Apresenta vazamento de
+                                                Diesel</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_voltagem_ok" {% if submission and
+                                                        ('gerador_voltagem_ok' in submission.form_data.get('gerador',
+                                                        []) or 'Voltagem de saída entre 210v e 230v' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Voltagem de saída entre 210v e 230v</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_manual_ok" {% if submission and
+                                                        ('gerador_manual_ok' in submission.form_data.get('gerador', [])
+                                                        or 'Teste de acionamento manual' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Teste de acionamento manual
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_manut_periodica_req" {% if
+                                                        submission and ('gerador_manut_periodica_req' in
+                                                        submission.form_data.get('gerador', [])
+                                                        or 'Necessita de manutenção periódica' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Necessita de manutenção periódica</div>
+
+                                        <!-- Novos Itens de Bateria do Gerador -->
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_bateria_troca_req" {% if
+                                                        submission and 'gerador_bateria_troca_req' in
+                                                        submission.form_data.get('gerador', []) %}checked{% endif %}>
+                                                Bateria do gerador necessita de troca</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_bateria_trocada" {% if submission
+                                                        and 'gerador_bateria_trocada' in
+                                                        submission.form_data.get('gerador', []) %}checked{% endif %}>
+                                                Bateria do gerador trocada</div>
+
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="gerador" value="gerador_manut_periodica_realizada" {% if
+                                                        submission and ('gerador_manut_periodica_realizada' in
+                                                        submission.form_data.get('gerador', [])
+                                                        or 'Realizado Manutenção periódica do Gerador' in
+                                                        submission.form_data.get('gerador', [])) %}checked{% endif %}>
+                                                Realizado Manutenção periódica</div>
+                                        <input type="text" class="form-control mt-2" name="gerador_outro"
+                                                placeholder="Outro (opcional)"
+                                                value="{{ submission.form_data.get('gerador_outro', '') if submission }}">
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Banco de Baterias <span class="required-star">*</span></div>
+                                <div class="card-body" id="baterias-group">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_ok" {% if submission and
+                                                        ('baterias_ok' in submission.form_data.get('baterias', [])
+                                                        or 'Baterias testadas e funcionando corretamente' in
+                                                        submission.form_data.get('baterias', [])) %}checked{% endif %}>
+                                                Baterias testadas e funcionando corretamente</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_vazamento" {% if submission and
+                                                        ('baterias_vazamento' in submission.form_data.get('baterias',
+                                                        []) or 'Bateria apresenta vazamento' in
+                                                        submission.form_data.get('baterias', [])) %}checked{% endif %}>
+                                                Bateria apresenta vazamento
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_oxidacao" {% if submission and
+                                                        ('baterias_oxidacao' in submission.form_data.get('baterias', [])
+                                                        or 'Bateria apresenta oxidação nos conectores' in
+                                                        submission.form_data.get('baterias', [])) %}checked{% endif %}>
+                                                Bateria apresenta oxidação nos conectores</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_cabos_ok" {% if submission and
+                                                        ('baterias_cabos_ok' in submission.form_data.get('baterias', [])
+                                                        or 'Cabos conectados de forma correta' in
+                                                        submission.form_data.get('baterias', [])) %}checked{% endif %}>
+                                                Cabos conectados de forma correta</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_aquecimento" {% if submission
+                                                        and ('baterias_aquecimento' in
+                                                        submission.form_data.get('baterias', [])
+                                                        or 'Alguma bateria apresenta aquecimento' in
+                                                        submission.form_data.get('baterias', [])) %}checked{% endif %}>
+                                                Alguma bateria apresenta aquecimento</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_defeito" {% if submission and
+                                                        ('baterias_defeito' in submission.form_data.get('baterias', [])
+                                                        or 'Bateria com defeito ou abaixo da voltagem' in
+                                                        submission.form_data.get('baterias', [])) %}checked{% endif %}>
+                                                Bateria com defeito ou abaixo da voltagem</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_troca_periodica_req" {% if
+                                                        submission and ('baterias_troca_periodica_req' in
+                                                        submission.form_data.get('baterias', [])
+                                                        or 'Necessita de Troca periódica' in
+                                                        submission.form_data.get('baterias', [])) %}checked{% endif %}>
+                                                Necessita de Troca periódica
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="baterias" value="baterias_trocadas" {% if submission and
+                                                        ('baterias_trocadas' in submission.form_data.get('baterias', [])
+                                                        or 'Baterias Trocadas' in submission.form_data.get('baterias',
+                                                        [])) %}checked{% endif %}> Baterias Trocadas</div>
+                                        <input type="text" class="form-control mt-2" name="baterias_outro"
+                                                placeholder="Outro (opcional)"
+                                                value="{{ submission.form_data.get('baterias_outro', '') if submission }}">
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Rede Elétrica <span class="required-star">*</span></div>
+                                <div class="card-body" id="rede_eletrica-group">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="rede_eletrica" value="rede_tensao_ok" {% if submission and
+                                                        ('rede_tensao_ok' in submission.form_data.get('rede_eletrica',
+                                                        []) or 'Tensão entre 210v e 230v' in
+                                                        submission.form_data.get('rede_eletrica', [])) %}checked{% endif
+                                                        %}> Tensão entre 210v e 230v
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="rede_eletrica" value="rede_aterramento_ok" {% if
+                                                        submission and ('rede_aterramento_ok' in
+                                                        submission.form_data.get('rede_eletrica', [])
+                                                        or 'Aterramento Funcionando' in
+                                                        submission.form_data.get('rede_eletrica', [])) %}checked{% endif
+                                                        %}> Aterramento Funcionando
+                                        </div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="rede_eletrica" value="rede_disjuntor_aquecendo" {% if
+                                                        submission and ('rede_disjuntor_aquecendo' in
+                                                        submission.form_data.get('rede_eletrica', [])
+                                                        or 'Disjuntor ou fiação Aquecendo' in
+                                                        submission.form_data.get('rede_eletrica', [])) %}checked{% endif
+                                                        %}> Disjuntor ou fiação
+                                                Aquecendo</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="rede_eletrica" value="rede_fora_padrao" {% if submission
+                                                        and ('rede_fora_padrao' in
+                                                        submission.form_data.get('rede_eletrica', [])
+                                                        or 'Conexão elétrica fora do padrão' in
+                                                        submission.form_data.get('rede_eletrica', [])) %}checked{% endif
+                                                        %}> Conexão elétrica fora do padrão</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="rede_eletrica" value="rede_sem_aterramento" {% if
+                                                        submission and ('rede_sem_aterramento' in
+                                                        submission.form_data.get('rede_eletrica', [])
+                                                        or 'Rede elétrica não possui aterramento' in
+                                                        submission.form_data.get('rede_eletrica', [])) %}checked{% endif
+                                                        %}> Rede elétrica não possui aterramento</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="rede_eletrica" value="rede_lampada_queimada" {% if
+                                                        submission and ('rede_lampada_queimada' in
+                                                        submission.form_data.get('rede_eletrica', [])
+                                                        or 'Lâmpada queimada' in
+                                                        submission.form_data.get('rede_eletrica', [])) %}checked{% endif
+                                                        %}> Lâmpada queimada</div>
+                                        <input type="text" class="form-control mt-2" name="rede_eletrica_outro"
+                                                placeholder="Outro (opcional)"
+                                                value="{{ submission.form_data.get('rede_eletrica_outro', '') if submission }}">
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Retificadoras -48v <span class="required-star">*</span></div>
+                                <div class="card-body" id="retificadoras-group">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="retificadoras" value="retificadora_funciona_desligada" {%
+                                                        if submission and ('retificadora_funciona_desligada' in
+                                                        submission.form_data.get('retificadoras', [])
+                                                        or 'Funcionando corretamente ao desligar alimentação' in
+                                                        submission.form_data.get('retificadoras', [])) %}checked{% endif
+                                                        %}> Funcionando corretamente
+                                                ao desligar alimentação</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="retificadoras" value="retificadora_monitoramento_energia"
+                                                        {% if submission and ('retificadora_monitoramento_energia' in
+                                                        submission.form_data.get('retificadoras', [])
+                                                        or 'Retificadora com monitoramento de energia' in
+                                                        submission.form_data.get('retificadoras', [])) %}checked{% endif
+                                                        %}> Retificadora com monitoramento de energia</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="retificadoras" value="retificadora_roteador_monitor" {% if
+                                                        submission and ('retificadora_roteador_monitor' in
+                                                        submission.form_data.get('retificadoras', [])
+                                                        or 'Roteador com função: Monitor de energia' in
+                                                        submission.form_data.get('retificadoras', [])) %}checked{% endif
+                                                        %}> Roteador com função: Monitor de energia</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="retificadoras" value="retificadora_cabos_ok" {% if
+                                                        submission and ('retificadora_cabos_ok' in
+                                                        submission.form_data.get('retificadoras', [])
+                                                        or 'Cabos conectados de forma correta' in
+                                                        submission.form_data.get('retificadoras', [])) %}checked{% endif
+                                                        %}> Cabos conectados de forma correta</div>
+                                        <input type="text" class="form-control mt-2" name="retificadoras_outro"
+                                                placeholder="Outro (opcional)"
+                                                value="{{ submission.form_data.get('retificadoras_outro', '') if submission }}">
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Rack's e Ambiente</div>
+                                <div class="card-body">
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_fixados_ok" {% if submission and
+                                                        ('racks_fixados_ok' in submission.form_data.get('racks', [])
+                                                        or 'Equipamentos fixados corretamente' in
+                                                        submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Equipamentos fixados corretamente</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_identificados_ok" {% if submission and
+                                                        ('racks_identificados_ok' in submission.form_data.get('racks',
+                                                        []) or 'Equipamentos identificados' in
+                                                        submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Equipamentos identificados</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_mal_fixados" {% if submission and
+                                                        ('racks_mal_fixados' in submission.form_data.get('racks', [])
+                                                        or 'Equipamentos mal fixados ou desorganizados' in
+                                                        submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Equipamentos mal fixados ou desorganizados</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_cabos_id_pap" {% if submission and
+                                                        ('racks_cabos_id_pap' in submission.form_data.get('racks', [])
+                                                        or 'Cabos identificados PAP' in
+                                                        submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Cabos identificados PAP</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_cabos_organizados" {% if submission
+                                                        and ('racks_cabos_organizados' in
+                                                        submission.form_data.get('racks', []) or 'Cabos organizados' in
+                                                        submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Cabos organizados</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_cabos_desorganizados" {% if submission
+                                                        and ('racks_cabos_desorganizados' in
+                                                        submission.form_data.get('racks', []) or 'Cabos desorganizados'
+                                                        in submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Cabos desorganizados</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_espaco_ok" {% if submission and
+                                                        ('racks_espaco_ok' in submission.form_data.get('racks', [])
+                                                        or 'Rack adequado e espaço suficiente para novos equipamentos'
+                                                        in submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Rack adequado e espaço
+                                                suficiente para novos equipamentos</div>
+                                        <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="racks" value="racks_limpo_organizado" {% if submission and
+                                                        ('racks_limpo_organizado' in submission.form_data.get('racks',
+                                                        []) or 'Ambiente limpo e organizado' in
+                                                        submission.form_data.get('racks', [])) %}checked{% endif %}>
+                                                Ambiente limpo e organizado
+                                        </div>
+                                        <input type="text" class="form-control mt-2" name="racks_outro"
+                                                placeholder="Outro (opcional)"
+                                                value="{{ submission.form_data.get('racks_outro', '') if submission }}">
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Amperagem</div>
+                                <div class="card-body">
+                                        <div class="mb-3">
+                                                <label for="amperagem_rack_01" class="form-label">Amperagem Rack 01:
+                                                        <span class="required-star">*</span></label>
+                                                <input type="text" class="form-control" id="amperagem_rack_01"
+                                                        name="amperagem_rack_01"
+                                                        value="{{ submission.form_data.get('amperagem_rack_01', '') if submission }}"
+                                                        required>
+                                        </div>
+                                        <div class="mb-3">
+                                                <label for="amperagem_rack_02" class="form-label">Amperagem Rack
+                                                        02:</label>
+                                                <input type="text" class="form-control" id="amperagem_rack_02"
+                                                        name="amperagem_rack_02"
+                                                        value="{{ submission.form_data.get('amperagem_rack_02', '') if submission }}">
+                                        </div>
+                                        <div class="mb-3">
+                                                <label for="amperagem_rack_03" class="form-label">Amperagem Rack
+                                                        03:</label>
+                                                <input type="text" class="form-control" id="amperagem_rack_03"
+                                                        name="amperagem_rack_03"
+                                                        value="{{ submission.form_data.get('amperagem_rack_03', '') if submission }}">
+                                        </div>
+                                </div>
+                        </div>
+
+                        <div class="card mb-4">
+                                <div class="card-header">Fotos <span class="required-star">*</span> <small
+                                                class="text-muted">(obrigatórias)</small></div>
+                                <div class="card-body">
+                                        {% if submission and submission.photos %}
+                                        <div class="mb-3">
+                                                <p>Fotos existentes:</p>
+                                                <div class="d-flex flex-wrap">
+                                                        {% for photo_path in submission.photos %}
+                                                        <div class="me-2 mb-2 text-center position-relative">
+                                                                <a href="{{ url_for('uploaded_file', filename=photo_path) }}"
+                                                                        target="_blank">
+                                                                        <img src="{{ url_for('uploaded_file', filename=photo_path) }}"
+                                                                                alt="Foto"
+                                                                                style="max-width: 150px; height: auto; border-radius: 5px;">
+                                                                </a>
+                                                                <div class="mt-1">
+                                                                        <input type="checkbox" class="form-check-input"
+                                                                                name="delete_photos"
+                                                                                value="{{ photo_path.replace('/', '\\') }}">
+                                                                        <label class="form-check-label">Excluir</label>
+                                                                </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                </div>
+                                        </div>
+                                        {% endif %}
+
+                                        <p class="card-text">Selecione as fotos obrigatórias:</p>
+                                        <ul class="card-text text-muted ps-4">
+                                                <li>Ambiente (organização e limpeza)</li>
+                                                <li>Rack inteiro (frente e organização)</li>
+                                                <li>Ar-condicionado</li>
+                                        </ul>
+                                        <div class="mb-3">
+                                                <label class="form-label">Adicionar novos arquivos:</label>
+
+                                                <div class="row g-2 mb-2">
+                                                        <!-- Campo Oculto Master onde o JS joga todos os arquivos validos para o submit -->
+                                                        <input class="d-none" type="file" id="final_upload_input"
+                                                                name="fotos[]" multiple>
+
+                                                        <div class="col-6 position-relative" style="min-height: 120px;">
+                                                                <input class="position-absolute w-100 h-100 top-0 start-0 opacity-0 z-3 photo-input"
+                                                                        style="cursor: pointer;" type="file"
+                                                                        id="camera_input" accept="image/*"
+                                                                        capture="environment">
+                                                                <div
+                                                                        class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center justify-content-center h-100 position-absolute top-0 start-0 z-1">
+                                                                        <span class="fs-1 mb-1">📷</span>
+                                                                        <span class="fw-bold">Tirar Foto</span>
+                                                                </div>
+                                                        </div>
+                                                        <div class="col-6 position-relative" style="min-height: 120px;">
+                                                                <input class="position-absolute w-100 h-100 top-0 start-0 opacity-0 z-3 photo-input"
+                                                                        style="cursor: pointer;" type="file"
+                                                                        id="upload_input" multiple accept="image/*">
+                                                                <div
+                                                                        class="btn btn-outline-secondary w-100 py-3 d-flex flex-column align-items-center justify-content-center h-100 position-absolute top-0 start-0 z-1">
+                                                                        <span class="fs-1 mb-1">🖼️</span>
+                                                                        <span class="fw-bold">Galeria</span>
+                                                                </div>
+                                                        </div>
+                                                </div>
+
+                                                <div id="photo-counter" class="mt-2 text-center"></div>
+                                                <div id="file-list-display" class="mt-2 small text-muted text-center">
+                                                </div>
+
+                                                <button type="button" id="btn-clean-photos"
+                                                        class="btn btn-outline-danger btn-sm w-100 mt-2 d-none">
+                                                        🗑️ Limpar Seleção
+                                                </button>
+
+                                                <small class="form-text text-muted d-block mt-3 text-center">
+                                                        💡 Você pode combinar fotos da câmera e da galeria.<br>
+                                                        Mínimo: <strong>3 fotos</strong>. Máximo: <strong>6
+                                                                fotos</strong>.
+                                                </small>
+                                        </div>
+                                </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">{{ "Salvar Alterações" if submission
+                                else "Enviar Formulário" }}</button>
+                </form>
+        </div>
+</div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+                const inputs = document.querySelectorAll('.photo-input');
+                const photoCounter = document.getElementById('photo-counter');
+                const fileListDisplay = document.getElementById('file-list-display');
+                const btnClean = document.getElementById('btn-clean-photos');
+                const form = document.querySelector('form.needs-validation');
+
+                if (!form || inputs.length === 0) {
+                        console.error("Formulário ou inputs de foto não encontrados!");
+                        return;
+                }
+
+                // Array global para armazenar os arquivos File selecionados
+                let globalFiles = [];
+
+                function updatePhotoStatus() {
+                        let totalFiles = globalFiles.length;
+                        let fileNames = [];
+
+                        globalFiles.forEach(file => {
+                                fileNames.push(`📸 ${file.name}`);
+                        });
+
+                        if (fileNames.length > 0) {
+                                fileListDisplay.innerHTML = fileNames.join('<br>');
+                                if (btnClean) btnClean.classList.remove('d-none');
+                        } else {
+                                fileListDisplay.innerHTML = 'Nenhuma foto selecionada';
+                                if (btnClean) btnClean.classList.add('d-none');
+                        }
+
+                        if (photoCounter) {
+                                let message = '';
+                                let alertClass = '';
+
+                                if (totalFiles === 0) {
+                                        photoCounter.innerHTML = '';
+                                        return;
+                                }
+
+                                if (totalFiles >= 3 && totalFiles <= 6) {
+                                        alertClass = 'alert-success';
+                                        message = `✓ ${totalFiles} foto(s) prontas (Limite: 3 a 6)`;
+                                } else if (totalFiles > 6) {
+                                        alertClass = 'alert-danger';
+                                        message = `❌ Excesso: ${totalFiles} fotos (Máximo: 6)`;
+                                } else {
+                                        alertClass = 'alert-warning';
+                                        message = `⚠️ ${totalFiles} foto(s) (Faltam ${3 - totalFiles} para o mínimo)`;
+                                }
+
+                                photoCounter.innerHTML = `<div class="alert ${alertClass} py-2 mb-0 fw-bold">${message}</div>`;
+                        }
+                }
+
+                inputs.forEach(input => {
+                        input.addEventListener('change', function (e) {
+                                try {
+                                        if (!e.target.files || e.target.files.length === 0) { return; }
+
+                                        const newFiles = Array.from(e.target.files);
+                                        let adicionou = false;
+
+                                        newFiles.forEach(file => {
+                                                if (file.size > 10 * 1024 * 1024) {
+                                                        alert(`O arquivo "${file.name}" é muito grande! (Máx: 10MB)`);
+                                                } else {
+                                                        const exists = globalFiles.find(f => f.name === file.name && f.size === file.size);
+                                                        if (!exists) {
+                                                                globalFiles.push(file);
+                                                                adicionou = true;
+                                                        }
+                                                }
+                                        });
+
+                                        if (adicionou) {
+                                                updatePhotoStatus();
+                                        }
+
+                                        try { e.target.value = ''; } catch (e) { }
+                                } catch (err) {
+                                        console.error(err);
+                                }
+                        });
+                });
+
+                if (btnClean) {
+                        btnClean.addEventListener('click', function () {
+                                globalFiles = [];
+                                updatePhotoStatus();
+                        });
+                }
+
+                if (form) {
+                        form.addEventListener('submit', async function (event) {
+                                event.preventDefault();
+                                event.stopPropagation();
+
+                                // 1) Validação de Checkboxes
+                                let formIsValid = true;
+                                const checkboxGroups = [
+                                        { name: 'limpeza', groupElementId: 'limpeza-group', friendlyName: 'Limpeza e Organização' },
+                                        { name: 'ar_condicionado', groupElementId: 'ar_condicionado-group', friendlyName: 'Funcionamento Ar Condicionado' },
+                                        { name: 'gerador', groupElementId: 'gerador-group', friendlyName: 'Gerador' },
+                                        { name: 'baterias', groupElementId: 'baterias-group', friendlyName: 'Banco de Baterias' },
+                                        { name: 'rede_eletrica', groupElementId: 'rede_eletrica-group', friendlyName: 'Rede Elétrica' },
+                                        { name: 'retificadoras', groupElementId: 'retificadoras-group', friendlyName: 'Retificadoras -48v' }
+                                ];
+
+                                checkboxGroups.forEach(group => {
+                                        const groupEl = document.getElementById(group.groupElementId);
+                                        if (groupEl) {
+                                                const checkboxes = document.querySelectorAll(`input[name="${group.name}"]:checked`);
+                                                if (checkboxes.length === 0) {
+                                                        formIsValid = false;
+                                                        alert(`Por favor, selecione pelo menos uma opção em "${group.friendlyName}".`);
+                                                        groupEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                }
+                                        }
+                                });
+
+                                if (!formIsValid) return false;
+
+                                // 2) Validação de Fotos
+                                let totalFiles = globalFiles.length;
+
+                                if (totalFiles < 3 || totalFiles > 6) {
+                                        let msg = totalFiles > 6
+                                                ? `Você tem ${totalFiles} fotos. O limite máximo é 6 fotos. Remova ${totalFiles - 6} foto(s) limpando a seleção e enviando de novo.`
+                                                : `Você adicionou ${totalFiles} foto(s). São necessárias pelo menos 3. Por favor, adicione mais ${3 - totalFiles} foto(s).`;
+                                        alert('⚠️ ATENÇÃO: FOTOS INCOMPLETAS\n\n' + msg);
+                                        if (photoCounter) photoCounter.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        return false;
+                                }
+
+                                // 3) Se tudo passou na validação, preparamos o envio AJAX Oculto
+                                const submitBtn = form.querySelector('button[type="submit"]');
+                                const originalBtnText = submitBtn ? submitBtn.innerHTML : 'Salvar';
+
+                                if (submitBtn) {
+                                        submitBtn.disabled = true;
+                                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando arquivos...';
+                                }
+
+                                try {
+                                        const formData = new FormData(form);
+
+                                        formData.delete('fotos[]');
+                                        formData.delete('fotos_camera[]');
+                                        formData.delete('fotos_galeria[]');
+
+                                        globalFiles.forEach(file => {
+                                                formData.append('fotos[]', file);
+                                        });
+
+                                        const response = await fetch(form.action, {
+                                                method: 'POST',
+                                                body: formData,
+                                                redirect: 'follow'
+                                        });
+
+                                        if (response.ok) {
+                                                window.location.href = response.url;
+                                        } else {
+                                                const htmlResponse = await response.text();
+                                                document.open();
+                                                document.write(htmlResponse);
+                                                document.close();
+                                        }
+
+                                } catch (error) {
+                                        alert('Erro de rede ao salvar os dados. Tente novamente: ' + error.message);
+                                        if (submitBtn) {
+                                                submitBtn.disabled = false;
+                                                submitBtn.innerHTML = originalBtnText;
+                                        }
+                                }
+                        });
+                }
+        });
+</script>
+
+<script>
+        // Checkbox validation is now handled inside photo_validation.js
+</script>
+{% endblock %}
