@@ -264,6 +264,16 @@ def get_pendencias_by_pop(pop_name=None, status=None):
     cursor.execute(query, params)
     return [dict(row) for row in cursor.fetchall()]
 
+def pendencia_exists(pop_name, categoria, descricao):
+    """Verifica se já existe uma pendência aberta idêntica para não duplicar."""
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT 1 FROM vistoria_pendencias WHERE pop_name = %s AND categoria = %s AND descricao = %s AND status = 'pendente'",
+        (pop_name, categoria, descricao)
+    )
+    return cursor.fetchone() is not None
+
 def add_pendencia(pop_name, categoria, descricao, data_identificacao, submission_id=None, observacoes=None):
     """Adiciona uma nova pendência."""
     db = get_db()
