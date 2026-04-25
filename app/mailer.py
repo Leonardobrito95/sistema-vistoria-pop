@@ -15,7 +15,7 @@ SMTP_PORT = 587
 SMTP_USER = "canaatelecom"
 SMTP_PASSWORD = "Admin01092023" 
 SMTP_SENDER = os.getenv("SMTP_SENDER_EMAIL", "contato@canaatelecom.com.br") 
-DEFAULT_RECIPIENT = "fernandolima@canaatelecom.com.br, leonardobrito@canaatelecom.com.br"
+DEFAULT_RECIPIENT = "fernandolima@canaatelecom.com.br"
 
 def _send_email_async(to_email, subject, body_html):
     """Função interna para disparar o e-mail via conexão SMTP na porta 587 (TLS)."""
@@ -54,17 +54,27 @@ def send_expiration_alert(pop_name, item_name, data_venc, status_atual, to_email
     subject = f"⚠️ Alerta: Vencimento próximo no POP {pop_name}"
     
     body_html = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; color: #333;">
-        <h3 style="color: #d9534f;">Olá,</h3>
-        <p>O status do item <strong>{item_name}</strong> no POP <strong>{pop_name}</strong> está exigindo atenção.</p>
-        <ul style="border-left: 3px solid #f0ad4e; padding-left: 15px;">
-            <li><strong>Data de Vencimento:</strong> {data_venc}</li>
-            <li><strong>Status Atual:</strong> {status_atual}</li>
-        </ul>
-        <p>Acesse o painel do sistema para programar a regularização.</p>
-      </body>
-    </html>
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <div style="background-color: #d32f2f; color: white; padding: 15px 20px;">
+        <h2 style="margin: 0; font-size: 18px;">⚠️ Alerta de Vencimento: POP {pop_name}</h2>
+      </div>
+      <div style="padding: 20px;">
+        <p style="margin-top: 0;">Olá, equipe.</p>
+        <p>O status de um item está exigindo atenção (próximo ao vencimento ou vencido):</p>
+        <div style="background-color: #fff8e1; padding: 15px; border-left: 4px solid #fbc02d; border-radius: 4px; margin-bottom: 20px;">
+          <p style="margin: 0 0 10px 0;">📌 <strong>Item:</strong> {item_name}</p>
+          <p style="margin: 0 0 10px 0;">📅 <strong>Vencimento:</strong> <span style="color: #d32f2f; font-weight: bold;">{data_venc}</span></p>
+          <p style="margin: 0;">⚠️ <strong>Status Atual:</strong> {status_atual}</p>
+        </div>
+        <div style="text-align: center; margin: 30px 0 10px 0;">
+          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+        </div>
+      </div>
+      <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
+        Este é um e-mail automático gerado pelo Sistema de Vistorias. Por favor, não responda.<br>
+        © {datetime.now().year} Departamento de TI - Canaã Telecom
+      </div>
+    </div>
     """
     threading.Thread(target=_send_email_async, args=(to_email, subject, body_html)).start()
 
@@ -76,18 +86,26 @@ def send_maintenance_update(pop_name, item_name, novo_status, to_email=DEFAULT_R
     data_hora = datetime.now().strftime('%d/%m/%Y às %H:%M')
     
     body_html = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; color: #333;">
-        <h3 style="color: #0275d8;">Olá,</h3>
-        <p>O status de manutenção do POP <strong>{pop_name}</strong> foi atualizado com sucesso no sistema.</p>
-        <ul style="border-left: 3px solid #5cb85c; padding-left: 15px;">
-            <li><strong>Item Atualizado:</strong> {item_name}</li>
-            <li><strong>Novo Status:</strong> {novo_status}</li>
-            <li><strong>Data da Atualização:</strong> {data_hora}</li>
-        </ul>
-        <p>Acesse o dashboard de vistorias para visualizar todos os detalhes.</p>
-      </body>
-    </html>
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <div style="background-color: #2e7d32; color: white; padding: 15px 20px;">
+        <h2 style="margin: 0; font-size: 18px;">✅ Status de Manutenção: POP {pop_name}</h2>
+      </div>
+      <div style="padding: 20px;">
+        <p style="margin-top: 0;">Olá, equipe.</p>
+        <p>Um status de manutenção foi atualizado no sistema:</p>
+        <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #4CAF50; border-radius: 4px; margin-bottom: 20px;">
+          <p style="margin: 0 0 10px 0;">📌 <strong>{item_name}:</strong> <span style="color: #2e7d32; font-weight: bold;">{novo_status}</span></p>
+          <p style="margin: 0; font-size: 12px; color: #666;">📅 <strong>Data da Atualização:</strong> {data_hora}</p>
+        </div>
+        <div style="text-align: center; margin: 30px 0 10px 0;">
+          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+        </div>
+      </div>
+      <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
+        Este é um e-mail automático gerado pelo Sistema de Vistorias. Por favor, não responda.<br>
+        © {datetime.now().year} Departamento de TI - Canaã Telecom
+      </div>
+    </div>
     """
     threading.Thread(target=_send_email_async, args=(to_email, subject, body_html)).start()
 
@@ -103,20 +121,29 @@ def send_mass_maintenance_update(pop_name, updated_items_list, to_email=DEFAULT_
     
     items_html = ""
     for item in updated_items_list:
-        items_html += f"<li><strong>{item['nome']}:</strong> {item['status']}</li>"
+        items_html += f'<p style="margin: 0 0 10px 0;">📌 <strong>{item["nome"]}:</strong> <span style="color: #2e7d32; font-weight: bold;">{item["status"]}</span></p>\n'
     
     body_html = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; color: #333;">
-        <h3 style="color: #0275d8;">Olá,</h3>
-        <p>A vistoria do POP <strong>{pop_name}</strong> acabou de renovar os seguintes status de manutenção no sistema:</p>
-        <ul style="border-left: 3px solid #5cb85c; padding-left: 15px;">
-            {items_html}
-            <li style="margin-top: 10px; color: #666; font-size: 0.9em;"><strong>Data da Atualização:</strong> {data_hora}</li>
-        </ul>
-        <p>Acesse o dashboard de vistorias para visualizar todos os detalhes.</p>
-      </body>
-    </html>
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <div style="background-color: #2e7d32; color: white; padding: 15px 20px;">
+        <h2 style="margin: 0; font-size: 18px;">✅ Status de Manutenção: POP {pop_name}</h2>
+      </div>
+      <div style="padding: 20px;">
+        <p style="margin-top: 0;">Olá, equipe.</p>
+        <p>A vistoria foi finalizada e os seguintes status de manutenção foram atualizados no sistema:</p>
+        <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #4CAF50; border-radius: 4px; margin-bottom: 20px;">
+          {items_html}
+          <p style="margin: 0; font-size: 12px; color: #666;">📅 <strong>Data da Atualização:</strong> {data_hora}</p>
+        </div>
+        <div style="text-align: center; margin: 30px 0 10px 0;">
+          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+        </div>
+      </div>
+      <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
+        Este é um e-mail automático gerado pelo Sistema de Vistorias. Por favor, não responda.<br>
+        © {datetime.now().year} Departamento de TI - Canaã Telecom
+      </div>
+    </div>
     """
     threading.Thread(target=_send_email_async, args=(to_email, subject, body_html)).start()
 
@@ -128,17 +155,27 @@ def send_pendency_resolved(pop_name, descricao_pendencia, resolved_by, to_email=
     data_hora = datetime.now().strftime('%d/%m/%Y às %H:%M')
     
     body_html = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; color: #333;">
-        <h3 style="color: #5cb85c;">Olá,</h3>
-        <p>Uma pendência técnica acaba de ser marcada como resolvida pela equipe.</p>
-        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px;">
-            <p style="margin: 5px 0;"><strong>📍 POP:</strong> {pop_name}</p>
-            <p style="margin: 5px 0;"><strong>🛠️ Serviço Realizado:</strong> {descricao_pendencia}</p>
-            <p style="margin: 5px 0;"><strong>👤 Resolvido por:</strong> {resolved_by}</p>
-            <p style="margin: 5px 0;"><strong>🕒 Data da Confirmação:</strong> {data_hora}</p>
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <div style="background-color: #1976d2; color: white; padding: 15px 20px;">
+        <h2 style="margin: 0; font-size: 18px;">✅ Pendência Resolvida: POP {pop_name}</h2>
+      </div>
+      <div style="padding: 20px;">
+        <p style="margin-top: 0;">Olá, equipe.</p>
+        <p>Uma pendência técnica acaba de ser marcada como resolvida no sistema.</p>
+        <div style="background-color: #f0f8ff; padding: 15px; border-left: 4px solid #1976d2; border-radius: 4px; margin-bottom: 20px;">
+          <p style="margin: 0 0 10px 0;">📍 <strong>POP:</strong> {pop_name}</p>
+          <p style="margin: 0 0 10px 0;">🛠️ <strong>Serviço Realizado:</strong> {descricao_pendencia}</p>
+          <p style="margin: 0 0 10px 0;">👤 <strong>Resolvido por:</strong> {resolved_by}</p>
+          <p style="margin: 0; font-size: 12px; color: #666;">🕒 <strong>Data da Confirmação:</strong> {data_hora}</p>
         </div>
-      </body>
-    </html>
+        <div style="text-align: center; margin: 30px 0 10px 0;">
+          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+        </div>
+      </div>
+      <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
+        Este é um e-mail automático gerado pelo Sistema de Vistorias. Por favor, não responda.<br>
+        © {datetime.now().year} Departamento de TI - Canaã Telecom
+      </div>
+    </div>
     """
     threading.Thread(target=_send_email_async, args=(to_email, subject, body_html)).start()

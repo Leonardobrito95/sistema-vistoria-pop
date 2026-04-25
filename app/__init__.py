@@ -7,6 +7,9 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 import threading
 from datetime import datetime, timedelta
+import psycopg2
+import psycopg2.extras
+
 from . import database
 from . import mailer
 
@@ -180,6 +183,8 @@ def pop_form(pop_name):
                 photos=json.dumps(uploaded_files_paths)
             )
             
+            # Gera pendencias automaticamente a partir dos itens problematicos marcados
+            threading.Thread(target=_auto_create_pendencias, args=(pop_name, form_data, submission_time)).start()
             threading.Thread(target=check_and_alert_POP_status, args=(pop_name,)).start()
             
         except Exception as e:
@@ -191,6 +196,86 @@ def pop_form(pop_name):
 
     pop_title = pop_name.replace('-', ' ').title()
     return render_template('form.html', pop_name=pop_name, pop_title=pop_title, pops=POPS, submission=None)
+
+def _auto_create_pendencias(pop_name, form_data, data_identificacao):
+    """
+    Analisa os dados submetidos de um formulario e abre pendencias automaticamente
+    para cada item problematico identificado. Tambem trata campos de texto 'Outro'.
+    """
+    # Mapa: valor_do_campo -> (categoria, descricao_da_pendencia)
+    PENDENCIA_MAP = {
+        # Limpeza e Organizacao
+        'limpeza_necessaria':           ('Limpeza e Organização', 'Necessita de Limpeza'),
+        # Ar Condicionado
+        'ar_vazando':                   ('Ar Condicionado', 'Vazando Água'),
+        'ar_nao_gela':                  ('Ar Condicionado', 'Não está gelando'),
+        'ar_manut_periodica_req':       ('Ar Condicionado', 'Necessita de Manutenção Periódica'),
+        # Gerador
+        'gerador_vazamento_oleo':       ('Gerador', 'Apresenta Vazamento de Óleo'),
+        'gerador_vazamento_diesel':     ('Gerador', 'Apresenta Vazamento de Diesel'),
+        'gerador_manut_periodica_req':  ('Gerador', 'Necessita de Manutenção Periódica'),
+        # Banco de Baterias
+        'baterias_vazamento':           ('Banco de Baterias', 'Bateria apresenta vazamento'),
+        'baterias_oxidacao':            ('Banco de Baterias', 'Bateria apresenta oxidação nos conectores'),
+        'baterias_aquecimento':         ('Banco de Baterias', 'Alguma bateria apresenta aquecimento'),
+        'baterias_troca_periodica_req': ('Banco de Baterias', 'Necessita de Troca Periódica'),
+        # Rede Eletrica
+        'rede_disjuntor_aquecendo':     ('Rede Elétrica', 'Disjuntor ou fiação Aquecendo'),
+        'rede_fora_padrao':             ('Rede Elétrica', 'Conexão elétrica fora do padrão'),
+        'rede_sem_aterramento':         ('Rede Elétrica', 'Rede elétrica não possui aterramento'),
+        'rede_lampada_queimada':        ('Rede Elétrica', 'Lâmpada queimada'),
+        # Racks e Ambiente (tambem sao pontos de atencao, mas agora geram pendencia)
+        'racks_mal_fixados':            ('Rack\'s e Ambiente', 'Equipamentos mal fixados ou desorganizados'),
+        'racks_cabos_desorganizados':   ('Rack\'s e Ambiente', 'Cabos desorganizados'),
+        'racks_sem_aterramento':        ('Rack\'s e Ambiente', 'Rede elétrica não possui aterramento'),
+    }
+
+    # Mapeia campos _outro para suas categorias
+    OUTRO_MAP = {
+        'limpeza':        'Limpeza e Organização',
+        'ar_condicionado': 'Ar Condicionado',
+        'gerador':        'Gerador',
+        'baterias':       'Banco de Baterias',
+        'rede_eletrica':  'Rede Elétrica',
+        'retificadoras':  'Retificadoras -48v',
+        'racks':          'Rack\'s e Ambiente',
+    }
+
+    try:
+        for section_values in form_data.values():
+            items = section_values if isinstance(section_values, list) else [section_values]
+            for item_value in items:
+                if item_value in PENDENCIA_MAP:
+                    categoria, descricao = PENDENCIA_MAP[item_value]
+                    if not database.pendencia_exists(pop_name, categoria, descricao):
+                        database.add_pendencia(
+                            pop_name=pop_name,
+                            categoria=categoria,
+                            descricao=descricao,
+                            data_identificacao=data_identificacao
+                        )
+
+        # Processa campos de texto livre (Outro)
+        for field_prefix, categoria in OUTRO_MAP.items():
+            outro_key = f'{field_prefix}_outro'
+            outro_value = form_data.get(outro_key)
+            if outro_value:
+                # pode ser string ou lista de strings
+                outros = outro_value if isinstance(outro_value, list) else [outro_value]
+                for texto in outros:
+                    texto = texto.strip()
+                    if texto:
+                        descricao = f'Outro: {texto}'
+                        if not database.pendencia_exists(pop_name, categoria, descricao):
+                            database.add_pendencia(
+                                pop_name=pop_name,
+                                categoria=categoria,
+                                descricao=descricao,
+                                data_identificacao=data_identificacao
+                            )
+    except Exception as e:
+        print(f'[PENDENCIAS] Erro ao gerar pendencias automaticas para {pop_name}: {e}')
+
 
 def check_and_alert_POP_status(pop_name):
     """Verifica os vencimentos de um POP específico e dispara alertas de e-mail."""
@@ -333,6 +418,34 @@ def dashboard():
         if pop not in pendencias_resolvidas_por_pop:
             pendencias_resolvidas_por_pop[pop] = []
         pendencias_resolvidas_por_pop[pop].append(p)
+        
+    # Agrupar os Pontos de Atenção baseados na última vistoria do POP
+    attention_keys_map = {
+        'limpeza_necessaria': 'Necessita de Limpeza',
+        'racks_cabos_desorganizados': 'Cabos desorganizados',
+        'racks_mal_fixados': 'Equipamentos mal fixados',
+        'rede_lampada_queimada': 'Lâmpada queimada'
+    }
+    pontos_atencao_por_pop = {}
+    for sub in submissions:
+        pop = sub['pop_name']
+        f_data = sub['form_data']
+        if isinstance(f_data, str):
+            import json
+            f_data = json.loads(f_data)
+            
+        attentions = []
+        for section, values in f_data.items():
+            if isinstance(values, list):
+                for val in values:
+                    if val in attention_keys_map:
+                        attentions.append(attention_keys_map[val])
+            elif isinstance(values, str):
+                if values in attention_keys_map:
+                    attentions.append(attention_keys_map[values])
+                    
+        if attentions:
+            pontos_atencao_por_pop[pop] = attentions
 
     return render_template('dashboard.html', 
                          submissions=submissions, 
@@ -341,6 +454,7 @@ def dashboard():
                          last_updates=last_updates,
                          pendencias_abertas=pendencias_por_pop,
                          pendencias_resolvidas=pendencias_resolvidas_por_pop,
+                         pontos_atencao=pontos_atencao_por_pop,
                          pops_to_display=pops_to_display,
                          pendencias_stats=pendencias_stats,
                          now=datetime.now())

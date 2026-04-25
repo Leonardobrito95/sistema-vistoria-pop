@@ -179,6 +179,41 @@
   {% endfor %}
 </div>
 
+{% if pontos_atencao %}
+<div class="card mb-3 shadow-sm" style="border-color: #f59e0b;">
+  <div class="card-header py-2" style="background-color: #fffbeb; border-bottom: 2px solid #f59e0b;">
+    <div class="d-flex align-items-center">
+      <h6 class="card-title mb-0 text-dark fw-bold">
+        <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Painel de atenção das vistorias recentes
+      </h6>
+    </div>
+  </div>
+  <div class="card-body p-2 p-md-3">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-2">
+      {% for pop_name, items in pontos_atencao.items() %}
+      <div class="col">
+        <div class="card shadow-sm border-0 h-100" style="background-color: var(--bs-tertiary-bg);">
+          <div class="card-header bg-transparent py-1 px-2 border-0">
+            <h6 class="mb-0 fw-bold fs-6" style="color: var(--bs-heading-color);">
+              {{ pop_name.replace('-', ' ').title() }}
+            </h6>
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for item in items %}
+            <li class="list-group-item bg-transparent px-2 py-1 small border-0 lh-sm"
+              style="color: var(--bs-body-color);">
+              <i class="bi bi-dot text-warning fs-5"></i> {{ item }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% if pendencias_abertas %}
 <div class="card mb-3 shadow-sm border-primary" id="pendencias-section">
   <div class="card-header text-white py-2" style="background-color: #002a55;">
@@ -199,9 +234,9 @@
       {% for pop_name, pendencias in pendencias_abertas.items() %}
       <div class="col">
         {% set qtd = pendencias|length %}
-        <div class="card shadow-sm bg-white border-0">
+        <div class="card shadow-sm border-0" style="background-color: var(--bs-body-bg);">
           <div class="card-header bg-transparent py-1 px-2 border-0">
-            <h6 class="mb-0 text-dark fw-bold fs-6">
+            <h6 class="mb-0 fw-bold fs-6" style="color: var(--bs-heading-color);">
               {{ pop_name.replace('-', ' ').title() }}
               <span
                 class="badge {{ 'bg-danger' if qtd > 5 else ('bg-warning text-dark' if qtd > 2 else 'bg-success') }} ms-1">{{
@@ -210,7 +245,7 @@
           </div>
           <ul class="list-group list-group-flush">
             {% for pendencia in pendencias %}
-            <li class="list-group-item bg-transparent px-2 py-1">
+            <li class="list-group-item px-2 py-1" style="background-color: var(--bs-body-bg);">
               <div class="d-flex justify-content-between align-items-start mb-1 gap-2">
                 <span class="badge bg-secondary text-wrap text-start lh-sm">{{ pendencia.categoria }}</span>
                 <div class="text-end lh-sm" style="min-width: max-content;">
@@ -223,7 +258,8 @@
                   {% endif %}
                 </div>
               </div>
-              <p class="mb-2 small text-dark lh-sm">{{ pendencia.descricao[:70] }}{% if pendencia.descricao|length > 70
+              <p class="mb-2 small lh-sm" style="color: var(--bs-heading-color);">{{ pendencia.descricao[:70] }}{% if
+                pendencia.descricao|length > 70
                 %}...{% endif %}</p>
 
               {% if current_user.is_authenticated %}
@@ -284,12 +320,14 @@
 <div class="accordion mb-3 shadow-sm rounded-3">
   <div class="accordion-item border-0" id="accordion-item-{{ sub.submission_id }}">
     <h2 class="accordion-header" id="heading-{{ sub.submission_id }}">
-      <button class="accordion-button collapsed bg-white border-bottom" type="button" data-bs-toggle="collapse"
+      <button class="accordion-button collapsed border-bottom" type="button" data-bs-toggle="collapse"
         data-bs-target="#collapse-{{ sub.submission_id }}" aria-expanded="false"
-        aria-controls="collapse-{{ sub.submission_id }}">
+        aria-controls="collapse-{{ sub.submission_id }}"
+        style="background-color: var(--bs-body-bg); color: var(--bs-body-color);">
 
         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center w-100 pe-3 gap-1 gap-md-3">
-          <div class="fw-bold fs-5 text-dark">POP: {{ sub.pop_name.replace('-', ' ').title() }}</div>
+          <div class="fw-bold fs-5" style="color: var(--bs-heading-color);">POP: {{ sub.pop_name.replace('-', '
+            ').title() }}</div>
 
           <div class="d-flex flex-row gap-3 text-secondary mt-1 mt-md-0" style="font-size: 0.9rem;">
             <span><i class="bi bi-person"></i> {{ sub.inspector_name }}</span>
@@ -311,24 +349,26 @@
 
     <div id="collapse-{{ sub.submission_id }}" class="accordion-collapse collapse"
       aria-labelledby="heading-{{ sub.submission_id }}">
-      <div class="accordion-body bg-light p-0">
+      <div class="accordion-body p-0" style="background-color: var(--bs-body-bg);">
 
         <!-- Navbar Tabs Superior Claro -->
-        <nav class="pt-2 px-2 border-bottom" style="background-color: #f8fafc;">
+        <nav class="pt-2 px-2 border-bottom" style="background-color: var(--bs-tertiary-bg);">
           <div class="nav nav-tabs border-0" id="nav-tab-{{ sub.submission_id }}" role="tablist">
-            <button class="nav-link active rounded-top-3 border-0 fw-semibold px-4 py-2 me-1"
-              style="color: #334155; background-color: #ffffff;" id="nav-details-tab-{{ sub.submission_id }}"
-              data-bs-toggle="tab" data-bs-target="#nav-details-{{ sub.submission_id }}" type="button" role="tab"
+            <button class="nav-link active rounded-top-3 border-0 fw-semibold px-4 py-2 me-1 bg-transparent text-dark"
+              id="nav-details-tab-{{ sub.submission_id }}" data-bs-toggle="tab"
+              data-bs-target="#nav-details-{{ sub.submission_id }}" type="button" role="tab"
               aria-controls="nav-details-{{ sub.submission_id }}" aria-selected="true"
-              onmouseover="if(!this.classList.contains('active')) this.style.backgroundColor='#e2e8f0';"
+              style="color: var(--bs-heading-color) !important;"
+              onmouseover="if(!this.classList.contains('active')) this.style.backgroundColor='var(--bs-secondary-bg)';"
               onmouseout="if(!this.classList.contains('active')) this.style.backgroundColor='transparent';">
               <i class="bi bi-card-checklist me-2"></i>Detalhes do Formulário
             </button>
             <button class="nav-link rounded-top-3 border-0 fw-semibold px-4 py-2"
-              style="color: #64748b; background-color: transparent;" id="nav-history-tab-{{ sub.submission_id }}"
-              data-bs-toggle="tab" data-bs-target="#nav-history-{{ sub.submission_id }}" type="button" role="tab"
+              style="color: var(--bs-secondary-color); background-color: transparent;"
+              id="nav-history-tab-{{ sub.submission_id }}" data-bs-toggle="tab"
+              data-bs-target="#nav-history-{{ sub.submission_id }}" type="button" role="tab"
               aria-controls="nav-history-{{ sub.submission_id }}" aria-selected="false"
-              onmouseover="if(!this.classList.contains('active')) this.style.backgroundColor='#e2e8f0';"
+              onmouseover="if(!this.classList.contains('active')) this.style.backgroundColor='var(--bs-secondary-bg)';"
               onmouseout="if(!this.classList.contains('active')) this.style.backgroundColor='transparent';">
               <i class="bi bi-clock-history me-2"></i>Historico de Pendências
               {% if sub.pop_name in pendencias_abertas %}
@@ -341,9 +381,9 @@
 
         <style>
           .nav-tabs .nav-link.active {
-            background-color: #ffffff !important;
+            background-color: var(--bs-body-bg) !important;
             border-bottom: 2px solid #3b82f6 !important;
-            color: #1e293b !important;
+            color: var(--bs-heading-color) !important;
           }
 
           .nav-tabs .nav-link {
@@ -353,7 +393,7 @@
         </style>
 
         <div class="tab-content border-top-0" id="nav-tabContent-{{ sub.submission_id }}"
-          style="background-color: #ffffff; color: #334155; min-height: 250px;">
+          style="min-height: 250px; background-color: var(--bs-body-bg);">
           <!-- Aba 1: Detalhes -->
           <div class="tab-pane fade show active p-3 p-md-4" id="nav-details-{{ sub.submission_id }}" role="tabpanel"
             aria-labelledby="nav-details-tab-{{ sub.submission_id }}" tabindex="0">
@@ -427,43 +467,56 @@
                   } %}
 
                   {% set problem_keys = [
-                  'limpeza_necessaria', 'ar_vazando', 'ar_nao_gela', 'ar_manut_periodica_req',
+                  'ar_vazando', 'ar_nao_gela',
                   'gerador_vazamento_oleo', 'gerador_vazamento_diesel', 'gerador_bateria_troca_req',
-                  'gerador_manut_periodica_req', 'baterias_vazamento', 'baterias_oxidacao',
-                  'baterias_aquecimento', 'baterias_defeito', 'baterias_troca_periodica_req',
-                  'rede_disjuntor_aquecendo', 'rede_fora_padrao', 'rede_sem_aterramento',
-                  'rede_lampada_queimada', 'racks_mal_fixados', 'racks_cabos_desorganizados'
+                  'baterias_vazamento', 'baterias_oxidacao',
+                  'baterias_aquecimento', 'baterias_defeito',
+                  'rede_disjuntor_aquecendo', 'rede_fora_padrao', 'rede_sem_aterramento'
+                  ] %}
+
+                  {% set attention_keys = [
+                  'limpeza_necessaria', 'ar_manut_periodica_req', 'gerador_manut_periodica_req',
+                  'baterias_troca_periodica_req', 'rede_lampada_queimada', 'racks_mal_fixados',
+                  'racks_cabos_desorganizados'
                   ] %}
 
                   {% for section, values in sub.form_data.items() %}
-                  <li
-                    class="mb-3 d-flex flex-column align-items-start gap-1 pb-2 border-bottom border-secondary border-opacity-10">
+                  <li class="mb-3 d-flex flex-column align-items-start gap-1 pb-2"
+                    style="border-bottom: 1px solid var(--bs-border-color);">
                     <div class="fw-bold text-uppercase mb-1"
-                      style="font-size: 0.85rem; color: #475569; letter-spacing: 0.5px;">
+                      style="font-size: 0.85rem; color: var(--bs-secondary-color); letter-spacing: 0.5px;">
                       <i class="bi {{ section_icons.get(section, 'bi-check2-square text-secondary') }} me-2"></i>{{
                       section.replace('_', ' ').title() }}
                     </div>
                     <div class="d-flex flex-column w-100 ps-4 gap-1">
                       {% if values is iterable and values is not string %}
                       {% for val in values %}
-                      <div class="d-flex align-items-center" style="font-size: 0.85rem; color: #334155;">
+                      <div class="d-flex align-items-center" style="font-size: 0.85rem; color: var(--bs-body-color);">
                         {% if val in problem_keys %}
+                        <i class="bi bi-x-circle-fill text-danger me-2" style="font-size: 0.9rem;"></i>
+                        <span class="text-danger fw-bold">{{ labels.get(val, val) }}</span>
+                        {% elif val in attention_keys %}
                         <i class="bi bi-exclamation-triangle-fill text-warning me-2" style="font-size: 0.9rem;"></i>
+                        <span class="text-warning fw-bold">{{ labels.get(val, val) }}</span>
                         {% else %}
                         <i class="bi bi-check-circle-fill text-success me-2" style="font-size: 0.9rem;"></i>
-                        {% endif %}
                         {{ labels.get(val, val) }}
+                        {% endif %}
                       </div>
                       {% endfor %}
                       {% else %}
                       {% if values %}
-                      <div class="d-flex align-items-center" style="font-size: 0.85rem; color: #334155;">
+                      <div class="d-flex align-items-center" style="font-size: 0.85rem; color: var(--bs-body-color);">
                         {% if values in problem_keys %}
+                        <i class="bi bi-x-circle-fill text-danger me-2" style="font-size: 0.9rem;"></i>
+                        <span class="text-danger fw-bold">{{ labels.get(values, values) }}</span>
+                        {% elif values in attention_keys %}
                         <i class="bi bi-exclamation-triangle-fill text-warning me-2" style="font-size: 0.9rem;"></i>
+                        <span class="text-warning fw-bold">{{ labels.get(values, values) }}</span>
                         {% else %}
                         <i class="bi bi-check-circle-fill text-success me-2" style="font-size: 0.9rem;"></i>
-                        {% endif %}
                         {{ labels.get(values, values) }}
+                        {% endif %}
                       </div>
                       {% endif %}
                       {% endif %}
@@ -574,16 +627,16 @@
               <!-- Pendências Abertas -->
               {% if sub.pop_name in pendencias_abertas %}
               {% for pendencia in pendencias_abertas[sub.pop_name] %}
-              <div class="list-group-item px-3 py-3"
-                style="background-color: rgba(239, 68, 68, 0.05); border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; color: #475569;">
+              <div class="list-group-item px-3 py-3 border-bottom"
+                style="border-color: var(--bs-border-color); font-size: 0.85rem; background-color: transparent;">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="badge text-white" style="background-color: #ef4444;">{{ pendencia.categoria }}</span>
-                  <small style="color: #64748b;"><i class="bi bi-calendar-x me-1"></i>Aberto em: {{
+                  <small class="text-muted"><i class="bi bi-calendar-x me-1"></i>Aberto em: {{
                     pendencia.data_identificacao.strftime('%d/%m/%Y') }}</small>
                 </div>
-                <p class="mb-2 fw-medium" style="color: #1e293b;">{{ pendencia.descricao }}</p>
+                <p class="mb-2 fw-medium" style="color: var(--bs-heading-color);">{{ pendencia.descricao }}</p>
 
-                <div class="d-flex align-items-center mt-2 pt-2" style="border-top: 1px dashed #cbd5e1;">
+                <div class="d-flex align-items-center mt-2 pt-2" style="border-top: 1px dashed var(--bs-border-color);">
                   <span class="badge bg-warning text-dark"><i
                       class="bi bi-exclamation-triangle-fill me-1"></i>Aguardando Resolução</span>
                 </div>
@@ -594,19 +647,24 @@
               <!-- Pendências Resolvidas -->
               {% if sub.pop_name in pendencias_resolvidas %}
               {% for pendencia in pendencias_resolvidas[sub.pop_name] %}
-              <div class="list-group-item px-3 py-3"
-                style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; color: #64748b;">
+              <div class="list-group-item px-3 py-3 border-bottom"
+                style="border-color: var(--bs-border-color); font-size: 0.85rem; background-color: var(--bs-tertiary-bg);">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="badge text-white" style="background-color: #0ea5e9;">{{ pendencia.categoria }}</span>
-                  <small style="color: #94a3b8;"><i class="bi bi-calendar-check me-1"></i> {{
-                    pendencia.data_resolucao.strftime('%d/%m/%Y - %H:%M') }}</small>
+                  <div class="text-end lh-sm">
+                    <small class="text-muted d-block"><i class="bi bi-calendar-plus me-1"></i> Identificada
+                      em: {{ pendencia.data_identificacao.strftime('%d/%m/%Y') }}</small>
+                    <small class="text-muted d-block mt-1"><i class="bi bi-calendar-check me-1"></i> Resolvida em: {{
+                      pendencia.data_resolucao.strftime('%d/%m/%Y - %H:%M') }}</small>
+                  </div>
                 </div>
-                <p class="mb-2 text-decoration-line-through" style="color: #94a3b8;">{{ pendencia.descricao }}</p>
+                <p class="mb-2 text-decoration-line-through text-muted">{{ pendencia.descricao }}</p>
 
-                <div class="d-flex align-items-start mt-2 pt-2" style="border-top: 1px dashed #cbd5e1;">
+                <div class="d-flex align-items-start mt-2 pt-2" style="border-top: 1px dashed var(--bs-border-color);">
                   <i class="bi bi-person-check fs-5 me-2" style="color: #059669;"></i>
                   <div style="font-size: 0.8rem;">
-                    <strong class="text-dark">{{ pendencia.resolved_by }}</strong> resolveu esta pendência.
+                    <strong style="color: var(--bs-heading-color);">{{ pendencia.resolved_by }}</strong> resolveu esta
+                    pendência.
                     {% if pendencia.observacoes %}
                     <br><span class="mt-1 d-block" style="color: #059669;"><i
                         class="bi bi-chat-right-quote-fill me-1"></i> "{{ pendencia.observacoes }}"</span>
