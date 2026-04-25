@@ -1,182 +1,118 @@
-Sistema de Controle de Vistorias e Manutenção de Infraestrutura (Vistoria POP)
+# Sistema Vistoria POP
 
-Este é um sistema web desenvolvido em Python (Flask) e integrado ao banco de dados PostgreSQL. O objetivo principal é gerenciar vistorias técnicas, controlar manutenções preventivas e monitorar pendências em POPs (Point of Presence) de infraestrutura e telecomunicações.
+Sistema web para gestão de vistorias e manutenção preventiva de POPs (Pontos de Presença) de infraestrutura de rede.
 
-<<<<<<< HEAD
-Funcionalidades Principais
-Dashboard Interativo: Visão geral em tempo real com farol de status (Verde para OK, Amarelo para Atenção e Vermelho para Vencido) para o acompanhamento das manutenções.
+## O problema que isso resolve
 
-Formulários de Vistoria: Checklists completos abrangendo banco de baterias, geradores, ar-condicionado, rede elétrica, retificadoras e limpeza.
+A equipe de infraestrutura vistoriava 8 POPs manualmente. Prazos de manutenção eram controlados em planilha, problemas encontrados ficavam em mensagens de WhatsApp e não havia rastreabilidade de quando cada item havia sido tratado.
 
-Validação de Imagens: Upload obrigatório de 3 a 6 fotos comprobatórias por vistoria, com validação de formato e limite de 10MB por arquivo.
+Quando uma bateria vencia ou um gerador precisava de manutenção periódica, a equipe descobria tarde — ou não descobria.
 
-Controle Automático de Vencimentos: Monitoramento de prazos implementado nativamente no sistema:
+## O que o sistema faz
 
-Banco de Baterias: 2 anos.
-=======
----
+Centraliza o registro de vistorias com formulário padronizado e upload de fotos. A partir de cada vistoria, o sistema gera pendências automaticamente para os itens com problema identificado e monitora os prazos de manutenção preventiva de cada POP.
 
-## Funcionalidades Principais
+Quando um prazo se aproxima do vencimento ou já venceu, o sistema dispara alertas por e-mail. Quando uma pendência é resolvida, o responsável registra a resolução e um e-mail de confirmação é enviado.
 
-- **Dashboard Interativo:** Visão geral em tempo real com farol de status (Verde para OK, Amarelo para Atenção e Vermelho para Vencido) para o acompanhamento das manutenções.
-- **Formulários de Vistoria:** Checklists completos abrangendo banco de baterias, geradores, ar-condicionado, rede elétrica, retificadoras e limpeza.
-- **Validação de Imagens:** Upload obrigatório de 3 a 6 fotos comprobatórias por vistoria, com validação de formato e limite de 10MB por arquivo.
-- **Controle Automático de Vencimentos:** Monitoramento de prazos implementado nativamente no sistema:
-  - **Banco de Baterias:** 2 anos.
-  - **Gerador e Baterias de Gerador:** 6 meses.
-  - **Ar-condicionado:** 3 meses.
-  - **Limpeza e Teste de Bateria:** 30 dias.
-- **Notificações por E-mail:** Alertas automáticos sobre atualizações de vistorias, vencimentos próximos e solução de pendências.
-- **Controle de Acesso:** Divisão em 3 níveis (Administrador, Supervisor e Usuário Comum), garantindo segurança e permissões adequadas para cada perfil de uso.
+## POPs monitorados
 
-## Tecnologias Utilizadas
+8 locais de infraestrutura: Águas Claras, Taguatinga, Ceilândia, Arniqueiras, SIA, Vicente Pires, Sudoeste e Pátio Brasil.
 
-- **Backend:** Python com framework Flask
-- **Autenticação:** `Flask-Login` e `Werkzeug Security`
-- **Banco de Dados:** PostgreSQL (via `psycopg2`)
-- **Configurações:** `python-dotenv` para variáveis de ambiente
-- **E-mail:** `smtplib` e `email.mime`
-- **Uploads:** `secure_filename` do Werkzeug
+## Ciclos de manutenção monitorados
 
----
+| Equipamento | Periodicidade |
+|---|---|
+| Banco de baterias | 2 anos |
+| Gerador | 6 meses |
+| Bateria do gerador | 6 meses |
+| Ar condicionado | 3 meses |
+| Limpeza | 30 dias |
+| Teste de bateria | 30 dias |
 
-## Estrutura do Projeto
->>>>>>> 95fbf8f (docs: Adiciona README.md detalhado com análise do projeto)
+O dashboard exibe o status de cada item por POP com indicadores visuais: OK, Atenção (próximo do vencimento) ou Vencido.
 
-Gerador e Baterias de Gerador: 6 meses.
+## Stack
 
-Ar-condicionado: 3 meses.
+| Camada | Tecnologia |
+|---|---|
+| Backend | Python + Flask |
+| Banco de dados | PostgreSQL |
+| Autenticação | Flask-Login |
+| Processo | systemd (produção) |
 
-Limpeza e Teste de Bateria: 30 dias.
+## Funcionalidades
 
-Notificações por E-mail: Alertas automáticos sobre atualizações de vistorias, vencimentos próximos e solução de pendências.
+- Formulário de vistoria com campos obrigatórios e upload de 3 a 6 fotos por POP
+- Geração automática de pendências a partir dos itens problemáticos marcados na vistoria
+- Dashboard com status de manutenção em tempo real para todos os POPs
+- Alertas por e-mail para manutenções próximas do vencimento e vencidas
+- Controle de pendências com registro de resolução e notificação por e-mail
+- Histórico completo de vistorias com filtro por POP
+- Gestão de usuários com três níveis de acesso: administrador, supervisor e inspetor
+- Limpeza automática de registros com mais de 365 dias
 
-Controle de Acesso: Divisão em 3 níveis (Administrador, Supervisor e Usuário Comum), garantindo segurança e permissões adequadas para cada perfil de uso.
+## Estrutura de diretórios
 
-Tecnologias Utilizadas
-Backend: Python com framework Flask
-
-Autenticação: Flask-Login e Werkzeug Security
-
-Banco de Dados: PostgreSQL (via psycopg2)
-
-Configurações: python-dotenv para variáveis de ambiente
-
-E-mail: smtplib e email.mime
-
-Uploads: secure_filename do Werkzeug
-
-Estrutura do Projeto
-Plaintext
+```
 sistema-vistoria-pop/
-├── .env.example            # Template de variáveis de ambiente
-├── .gitignore              # Arquivos ignorados pelo Git
-├── run.py                  # Ponto de entrada da aplicação
-├── requirements.txt        # Dependências do projeto
-├── ENTREGA_DO_SISTEMA.md   # Documentação de entrega e regras de negócio
-├── app/                    # Aplicação principal
-│   ├── __init__.py         # Rotas e controladores
-│   ├── database.py         # Conexão e manipulação do banco de dados
-│   ├── mailer.py           # Serviço de envio de e-mails via Locaweb SMTPLW
-│   ├── static/             # Assets (CSS, JS, Imagens)
-│   └── templates/          # Views em HTML e Jinja2
-└── data/                   # Scripts SQL e diretório para armazenamento de uploads
-<<<<<<< HEAD
-Configuração e Execução
-Pré-requisitos
-Python 3.8 ou superior
-
-Servidor PostgreSQL configurado e rodando
-
-Passos para Instalação
-1. Clone o repositório:
-
-Bash
-=======
+├── app/
+│   ├── __init__.py        # Rotas e lógica da aplicação (Flask)
+│   ├── database.py        # Acesso ao PostgreSQL (psycopg2)
+│   ├── mailer.py          # Envio de alertas por e-mail
+│   ├── static/            # CSS, JS e imagens
+│   └── templates/         # HTML (dashboard, formulário, histórico, usuários)
+├── data/
+│   ├── schema.sql         # Schema do banco de dados
+│   ├── schema_update.sql  # Migrations incrementais
+│   └── uploads/           # Fotos de vistoria (ignorado no git)
+├── .env.example
+├── cleanup_db.py          # Script para limpeza manual de duplicatas
+└── MANUAL_PRODUCAO.md     # Procedimentos de deploy e manutenção
 ```
 
----
+## Configuração
 
-## Configuração e Execução
+### Variáveis de ambiente
 
-### Pré-requisitos
-- **Python 3.8** ou superior
-- Servidor **PostgreSQL** configurado e rodando
+Copie o `.env.example` e preencha:
 
-### Passos para Instalação
-
-**1. Clone o repositório:**
-```bash
->>>>>>> 95fbf8f (docs: Adiciona README.md detalhado com análise do projeto)
-git clone https://github.com/Leozin-web/sistema-vistoria-POP.git
-cd sistema-vistoria-POP
-
-<<<<<<< HEAD
-2. Crie e ative o ambiente virtual:
-
-Bash
-=======
-**2. Crie e ative o ambiente virtual:**
-```bash
->>>>>>> 95fbf8f (docs: Adiciona README.md detalhado com análise do projeto)
-python -m venv venv
-
-# Linux/macOS:
-source venv/bin/activate
-
-# Windows:
-venv\Scripts\activate
-
-3. Instale as dependências:
-
-Bash
-pip install -r requirements.txt
-
-<<<<<<< HEAD
-4. Configure as variáveis de ambiente:
-=======
-**4. Configure as variáveis de ambiente:**
-Copie o arquivo `.env.example` para `.env` e ajuste as credenciais do seu banco de dados e chaves de segurança.
->>>>>>> 95fbf8f (docs: Adiciona README.md detalhado com análise do projeto)
-
-Copie o arquivo .env.example para .env e ajuste as credenciais do seu banco de dados e chaves de segurança.
-
-Snippet de código
-SECRET_KEY=sua-chave-secreta-aqui
-DB_HOST=172.31.29.10
+```env
+SECRET_KEY=sua_chave_secreta
+DB_HOST=host_do_postgresql
 DB_PORT=5432
-DB_NAME=sistema_db
-DB_USER=seu_usuario
-DB_PASS=sua_senha
-<<<<<<< HEAD
-Nota: As configurações do serviço de e-mail (Locaweb) podem ser ajustadas no arquivo mailer.py ou mapeadas via variáveis adicionais no .env.
-
-5. Inicialize o banco de dados:
-
-A criação das tabelas ocorre automaticamente na primeira execução da aplicação, consumindo o arquivo data/schema.sql através do módulo database.py.
-
-6. Inicie a aplicação:
-
-Bash
-python run.py
-O sistema estará disponível no seu navegador através do endereço http://localhost:5002.
-
-Licença
-=======
+DB_NAME=nome_do_banco
+DB_USER=usuario
+DB_PASS=senha
+SMTP_SENDER_EMAIL=email_de_envio
 ```
-> **Nota:** As configurações do serviço de e-mail (Locaweb) podem ser ajustadas no arquivo `mailer.py` ou mapeadas via variáveis adicionais no `.env`.
 
-**5. Inicialize o banco de dados:**
-A criação das tabelas ocorre automaticamente na primeira execução da aplicação, consumindo o arquivo `data/schema.sql` através do módulo `database.py`.
+### Banco de dados
 
-**6. Inicie a aplicação:**
 ```bash
-python run.py
+# O schema é aplicado automaticamente na primeira execução.
+# Para aplicar updates manualmente:
+psql -U usuario -d nome_do_banco -f data/schema_update.sql
 ```
-O sistema estará disponível no seu navegador através do endereço `http://localhost:5002`.
 
----
+## Rodando localmente
 
-## Licença
->>>>>>> 95fbf8f (docs: Adiciona README.md detalhado com análise do projeto)
-Desenvolvido para uso interno. Todos os direitos reservados.
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+flask run
+```
+
+## Rodando em produção (systemd)
+
+```bash
+# Status do serviço
+sudo systemctl status sistema-vistoria
+
+# Reiniciar após deploy
+sudo systemctl restart sistema-vistoria
+
+# Logs em tempo real
+sudo journalctl -u sistema-vistoria -f
+```
