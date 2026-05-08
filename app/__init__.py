@@ -49,7 +49,7 @@ def load_user(user_id):
         )
     return None
 
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-dev-key-trocar-em-producao')
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'data', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 

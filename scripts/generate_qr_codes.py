@@ -5,9 +5,12 @@ Cada QR code direciona para o dashboard filtrado por POP.
 
 import qrcode
 import os
+from dotenv import load_dotenv
 
-# URL base do dashboard
-BASE_URL = "http://45.230.84.50:5002/dashboard?pop="
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
+APP_BASE_URL = os.environ['APP_BASE_URL']
+BASE_URL = f"{APP_BASE_URL}/dashboard?pop="
 
 # Lista de POPs
 POPS = [

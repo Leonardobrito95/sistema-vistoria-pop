@@ -10,11 +10,11 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 # Carrega variáveis de ambiente do arquivo .env, se existir
 load_dotenv(os.path.join(_basedir, '..', '.env'))
 
-DB_HOST = os.getenv('DB_HOST', '172.31.29.10')
-DB_PORT = os.getenv('DB_PORT', '5432')
-DB_NAME = os.getenv('DB_NAME', 'sistema_db')
-DB_USER = os.getenv('DB_USER', 'datacanaa')
-DB_PASS = os.getenv('DB_PASS', '21#canaa@23')
+DB_HOST = os.environ['DB_HOST']
+DB_PORT = os.environ['DB_PORT']
+DB_NAME = os.environ['DB_NAME']
+DB_USER = os.environ['DB_USER']
+DB_PASS = os.environ['DB_PASS']
 
 DATABASE_URL = f"host='{DB_HOST}' port='{DB_PORT}' dbname='{DB_NAME}' user='{DB_USER}' password='{DB_PASS}'"
 
@@ -220,8 +220,9 @@ def delete_user(user_id):
 
 def create_initial_admin_user():
     if not get_user_by_username('admin'):
+        password = os.environ['ADMIN_INITIAL_PASSWORD']
         print("Criando usuário 'admin' inicial...")
-        create_user('admin', generate_password_hash('CNT@@##2025', method='pbkdf2:sha256'), 'Administrador do Sistema', True)
+        create_user('admin', generate_password_hash(password, method='pbkdf2:sha256'), 'Administrador do Sistema', True)
 
 def cleanup_old_submissions():
     """Exclui submissões e fotos com mais de 30 dias."""

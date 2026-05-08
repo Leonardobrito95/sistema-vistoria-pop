@@ -1,10 +1,14 @@
 import os
+from dotenv import load_dotenv
 from qrcode import QRCode, constants
+
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 from PIL import Image, ImageOps
 
 # Gera o QR Code
 qr = QRCode(error_correction=constants.ERROR_CORRECT_H)
-qr.add_data("http://172.31.29.10:5001/dashboard?pop=arniqueiras")
+APP_BASE_URL = os.environ.get('APP_BASE_URL', 'http://localhost:5002')
+qr.add_data(f"{APP_BASE_URL}/dashboard?pop=arniqueiras")
 qr.make()
 img_qr = qr.make_image(fill_color="black", back_color="white").convert('RGB')
 

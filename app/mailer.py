@@ -6,16 +6,14 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 
-# Carrega configurações do .env se existirem, caso contrário usa default
 load_dotenv('.env')
 
-# --- Configurações SMTP Locaweb ---
-SMTP_SERVER = "smtplw.com.br"
-SMTP_PORT = 587
-SMTP_USER = "canaatelecom"
-SMTP_PASSWORD = "Admin01092023" 
-SMTP_SENDER = os.getenv("SMTP_SENDER_EMAIL", "contato@canaatelecom.com.br") 
-DEFAULT_RECIPIENT = "fernandolima@canaatelecom.com.br"
+SMTP_SERVER = os.environ['SMTP_SERVER']
+SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+SMTP_USER = os.environ['SMTP_USER']
+SMTP_PASSWORD = os.environ['SMTP_PASSWORD']
+SMTP_SENDER = os.environ['SMTP_SENDER_EMAIL']
+DEFAULT_RECIPIENT = os.environ['SMTP_DEFAULT_RECIPIENT']
 
 def _send_email_async(to_email, subject, body_html):
     """Função interna para disparar o e-mail via conexão SMTP na porta 587 (TLS)."""
@@ -67,7 +65,7 @@ def send_expiration_alert(pop_name, item_name, data_venc, status_atual, to_email
           <p style="margin: 0;">⚠️ <strong>Status Atual:</strong> {status_atual}</p>
         </div>
         <div style="text-align: center; margin: 30px 0 10px 0;">
-          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+          <a href="{os.getenv('APP_BASE_URL', '')}/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
         </div>
       </div>
       <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
@@ -98,7 +96,7 @@ def send_maintenance_update(pop_name, item_name, novo_status, to_email=DEFAULT_R
           <p style="margin: 0; font-size: 12px; color: #666;">📅 <strong>Data da Atualização:</strong> {data_hora}</p>
         </div>
         <div style="text-align: center; margin: 30px 0 10px 0;">
-          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+          <a href="{os.getenv('APP_BASE_URL', '')}/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
         </div>
       </div>
       <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
@@ -136,7 +134,7 @@ def send_mass_maintenance_update(pop_name, updated_items_list, to_email=DEFAULT_
           <p style="margin: 0; font-size: 12px; color: #666;">📅 <strong>Data da Atualização:</strong> {data_hora}</p>
         </div>
         <div style="text-align: center; margin: 30px 0 10px 0;">
-          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+          <a href="{os.getenv('APP_BASE_URL', '')}/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
         </div>
       </div>
       <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
@@ -169,7 +167,7 @@ def send_pendency_resolved(pop_name, descricao_pendencia, resolved_by, to_email=
           <p style="margin: 0; font-size: 12px; color: #666;">🕒 <strong>Data da Confirmação:</strong> {data_hora}</p>
         </div>
         <div style="text-align: center; margin: 30px 0 10px 0;">
-          <a href="http://45.230.84.50:5002/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
+          <a href="{os.getenv('APP_BASE_URL', '')}/dashboard" style="background-color: #0056b3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Acessar Dashboard de Vistorias</a>
         </div>
       </div>
       <div style="background-color: #f4f4f4; color: #777; text-align: center; padding: 12px; font-size: 11px;">
