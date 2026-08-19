@@ -6,7 +6,7 @@ Sistema web para gestão de vistorias e manutenção preventiva de POPs (Pontos 
 
 A equipe de infraestrutura vistoriava 8 POPs manualmente. Prazos de manutenção eram controlados em planilha, problemas encontrados ficavam em mensagens de WhatsApp e não havia rastreabilidade de quando cada item havia sido tratado.
 
-Quando uma bateria vencia ou um gerador precisava de manutenção periódica, a equipe descobria tarde — ou não descobria.
+Quando uma bateria vencia ou um gerador precisava de manutenção periódica, a equipe descobria tarde, ou não descobria.
 
 ## O que o sistema faz
 
